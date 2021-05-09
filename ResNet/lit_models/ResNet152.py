@@ -16,11 +16,12 @@ class Accuracy(pl.metrics.Accuracy):
             preds = F.softmax(preds, dim=-1)
         super().update(preds=preds, target=target)
 
-class BaseLitModel(pl.LightningModule):
 
-    def __init__(self, model, args: argparse.Namespace = None):
+class ResNetLitModel(pl.LightningModule):
+
+    def __init__(self, args: argparse.Namespace = None):
         super().__init__()
-        self.model = model
+        self.model = resnet152(pretrained=True, progress=True)
         self.args = vars(args) if args is not None else {} # argparse.Namespase => dict
 
         optimizer = self.args.get("optimizer", OPTIMIZER)
@@ -29,7 +30,7 @@ class BaseLitModel(pl.LightningModule):
         self.lr = self.args.get("lr", LR)
 
         loss = self.args.get("loss", LOSS)
-        if loss not in ("cross_entropy"):
+        if loss != "cross_entropy" :
             self.loss_fn = getattr(torch.nn.functional, loss)
         
         self.train_acc = Accuracy()
@@ -43,8 +44,8 @@ class BaseLitModel(pl.LightningModule):
         parser.add_argument("--loss", type=str, default=LOSS, help="loss function form torch.nn.functional")
     
     def configure_optimizers(self) :
-        optimizer = self.optimizer_class(self.parameters(), lr=self.lr)
-        return optimzier
+        optimizer = self.optimizer_class(self.model.parameters(), lr=self.lr)
+        return optimizer
     
     def forward(self, inputs):
         return self.model(inputs)
