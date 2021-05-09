@@ -4,12 +4,6 @@ import pytorch_lightning as pl
 from torchvision.datasets import CIFAR10 as TorchCIFAR10
 from torchvision import transforms
 
-def load_and_print_info(data_module_class):
-    dataset = data_module_class()
-    dataset.prepare_data()
-    dataset.setup()
-    print(dataset)
-
 class CIFAR10(pl.LightningDataModule):
 
     def __init__(self, batch_size=32, data_path:str = '../ResNet_utils/data'):

@@ -37,19 +37,51 @@ def _setup_parser():
     parser = argparse.ArgumentParser(add_help=False, parents=[trainer_parser])
 
     # Basic arguments
-    parser.add_argument("--data_class", type=str, default="CIFAR10DataLoader")
+    parser.add_argument("--data_class", type=str, default="CIFAR10")
     parser.add_argument("--model_class", type=str, default="ResNet152")
     parser.add_argument("--load_checkpoint", type=str, default=None)
 
     # Get the data and model classese, so that we can add their specific arguments
     temp_args, _ = parser.parse_known_args() # no error with argument
     data_class = _import_class(f"ResNet_.data.{temp_args.data_class}")
-    model_class = _import_class(f"Resnet_.models.{temp_args.model_class}")
+    model_class = _import_class(f"ResNet_.models.{temp_args.model_class}")
 
+    # Get data, model, and LitModel specific arguments
+    model_group = parser.add_argument_group("Model Args")# make gruop with arguemnt
+    model_class.add_to_argparse(model_group)
 
-model = resnet152_adam.ResNet_Adam()
-cifar10 = CIFAR10.CIFAR10DataLoader()
+    lit_model_group = parser.add_argument_group("LitModel Args")
+    lit_models.BaseLitModel.add_to_argparse(lit_model_group)
 
-trainer = pl.Trainer()
+    parser.add_argument("--help", "-h", action="help")
 
-trainer.fit(model, cifar10)
+    return parser
+
+def main():
+    """
+    Run an experiment
+
+    """
+    parser = _setup_parser()
+    args = parser.parse_args()
+    data_class = _import_class(f"ResNet_.data.{args.data_class}")
+    model_class = _import_class(f"ResNet_.models.{args.model_class}")
+    data = data_class()
+    model = model_class(args=args)
+
+    lit_model_class = lit_models.BaseLitModel
+
+    if args.load_checkpoint is not None:
+        lit_model = lit_model_class.load_from_checkpoint(arg.load_checkpoint, args=args, model=model)
+    else :
+        lit_model = lit_model_class(args=args, model=model)
+    
+    logger = pl.loggers.TensorBoardLogger("../ResNet_utils/training/logs")
+
+    args.weigths_summary = "full"
+    trainer = pl.Trainer(default_root_dir='../ResNet_utils/trained_models/checkpoints').from_argparse_args(args, logger=logger)
+
+    trainer.tune(lit_model, datamodule=data)
+
+if __name__ == "__main__":
+    main()

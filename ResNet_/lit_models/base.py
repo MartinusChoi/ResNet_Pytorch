@@ -38,8 +38,8 @@ class BaseLitModel(pl.LightningModule):
     
     @staticmethod
     def add_to_argparse(parser):
-        parser.add_argument("--optimizer", type=str, default=OPTIMIZEZR, help="optimizezr class from torch.optim")
-        parser.add_argument("--lr", type=float, defualt=LR)
+        parser.add_argument("--optimizer", type=str, default=OPTIMIZER, help="optimizezr class from torch.optim")
+        parser.add_argument("--lr", type=float, default=LR)
         parser.add_argument("--loss", type=str, default=LOSS, help="loss function form torch.nn.functional")
     
     def configure_optimizers(self) :

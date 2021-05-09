@@ -8,7 +8,7 @@ PROGRESS = True
 
 class ResNet152:
 
-    def __init__(self, arg:argparse.Namespace = None):
+    def __init__(self, args:argparse.Namespace = None):
         self.args = vars(args) if args is not None else {}
 
         self.pretrained = self.args.get("pretrained", PRETRAINED)
