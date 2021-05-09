@@ -4,11 +4,15 @@ import importlib
 import numpy as np
 import torch
 import pytorch_lightning as pl
+from pytorch_lightning import Trainer
+from pytorch_lightning import loggers as pl_loggers
 
-from ResNet_ import lit_models
+from ResNet import lit_models
 
 np.random.seed(42)
 torch.manual_seed(42)
+
+MODEL_DIR = '../ResNet_utils/trained_models/checkpoints'
 
 def _import_class(module_and_class_name: str) -> type:
     """
@@ -37,15 +41,15 @@ def _setup_parser():
     parser = argparse.ArgumentParser(add_help=False, parents=[trainer_parser])
 
     # Basic arguments
-    parser.add_argument("--data_class", type=str, default="CIFAR10")
+    parser.add_argument("--data_class", type=str, default="cifar10")
     parser.add_argument("--load_checkpoint", type=str, default=None)
 
-    # Get the data and model classese, so that we can add their specific arguments
+    # Get the data classese, so that we can add their specific arguments
     temp_args, _ = parser.parse_known_args() # no error with argument
-    data_class = _import_class(f"ResNet_.data.{temp_args.data_class}DataModule")
+    data_class = _import_class(f"ResNet.data.Lit{temp_args.data_class}")
 
     lit_model_group = parser.add_argument_group("LitModel Args")
-    lit_models.ResNetLitModel.add_to_argparse(lit_model_group)
+    lit_models.LitResNetModule.add_to_argparse(lit_model_group)
 
     parser.add_argument("--help", "-h", action="help")
 
@@ -60,25 +64,22 @@ def main():
 
     args = parser.parse_args()
 
-    data_class = _import_class(f"ResNet_.data.{args.data_class}DataModule")
+    tb_logger = pl_loggers.TensorBoardLogger(MODEL_DIR)
 
-    data = data_class()
+    data_class = _import_class(f"ResNet.data.Lit{args.data_class}")
+    datamodule = data_class()
 
-    lit_model_class = lit_models.ResNetLitModel
+    lit_model_class = lit_models.LitResNetModule
 
     if args.load_checkpoint is not None:
         lit_model = lit_model_class.load_from_checkpoint(arg.load_checkpoint, args=args)
     else :
         lit_model = lit_model_class(args=args)
 
-    trainer = pl.Trainer.from_argparse_args(args)
+    trainer = Trainer(default_root_dir=MODEL_DIR, logger=tb_logger).from_argparse_args(args)
 
-    trainer.tune(lit_model, datamodule=data)
-
-    print(data)
-
-    trainer.fit(lit_model, datamodule=data)
-    trainer.test(lit_model, datamodule=data)
+    trainer.fit(lit_model, datamodule)
+    trainer.test(lit_model, datamodule)
 
 if __name__ == "__main__":
     main()

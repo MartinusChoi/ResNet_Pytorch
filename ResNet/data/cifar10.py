@@ -9,7 +9,7 @@ from torchvision import transforms
 
 DATA_DIR = '../ResNet_utils/data'
 
-class LitCIFAR10(LightningDataModule):
+class Litcifar10(LightningDataModule):
     def __init__(self, batch_size=32, data_dir:str = DATA_DIR):
         super().__init__()
         self.batch_size = batch_size

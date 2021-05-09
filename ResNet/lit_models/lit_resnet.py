@@ -1,6 +1,7 @@
 import argparse
 
 import torch
+import torch.nn as nn
 import torch.nn.functional as F
 import torch.optim as optim
 
@@ -9,8 +10,6 @@ from pytorch_lightning import LightningDataModule
 from pytorch_lightning import Trainer
 
 from torchvision import models
-
-import cifar10
 
 OPTIMZIER = "Adam"
 LR = 1e-3
@@ -30,6 +29,10 @@ class LitResNetModule(pl.LightningModule):
         self.args = vars(args) if args is not None else {}
 
         self.resnet = models.resnet152(pretrained=True, progress=True)
+
+        if args.data_class in ("mnist", "fashionmnist"):
+            self.resnet.conv1 = nn.Conv2d(1, 64, kernel_size=(7, 7), stride=(2, 2), padding=(3, 3), bias=False)
+
         self.params = self.resnet.parameters()
 
         optimizer = self.args.get("optimizer", OPTIMZIER)
@@ -79,14 +82,3 @@ class LitResNetModule(pl.LightningModule):
         z = self.resnet(x)
         self.test_acc(z, y)
         self.log("test_acc", self.test_acc, on_step=False, on_epoch=True)
-
-if __name__ == "__main__":
-    model = LitResNetModule()
-
-    trainer = pl.Trainer()
-
-    cifar10_dm = cifar10.LitCIFAR10()
-
-    trainer = Trainer(gpus=1)
-
-    trainer.fit(model, cifar10_dm)
