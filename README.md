@@ -67,6 +67,16 @@ python run_experiment.py --max_epochs 10 --data_class cifar10 --optimizer Adagra
 - `--max_epochs` : set maximum epochs.
 - `--gpus` : set option for gpus. if you want run with cpu, set this value with `0`.
 
+## Check Tensorboard log
+
+after you run experiment, you can check the log in tensorboard.
+
+first, move to correct directory, and command like this.
+
+~~~
+tensorboard --logdir ./Utils/tb_lightning_logs
+~~~
+
 ## Reference
 
 - [torchvision master documentation, models](https://pytorch.org/vision/stable/models.html) : follow document to load ResNet pretrained with ImageNet
