@@ -1,6 +1,6 @@
 # ResNet_Pytorch
 
-Implement Resnet-152 pretrained py ImageNet with pytorch.
+Implement ResNet pretrained py ImageNet with pytorch.
 
 three datasets are available.
 - MNIST
