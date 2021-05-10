@@ -7,7 +7,7 @@ from pytorch_lightning import LightningDataModule
 from torchvision.datasets import FashionMNIST as TorchFashionMNIST
 from torchvision import transforms
 
-DATA_DIR = '../ResNet_utils/data'
+DATA_DIR = 'Utils\data'
 
 class Litfashionmnist(LightningDataModule):
     def __init__(self, batch_size=32, data_dir:str = DATA_DIR):
@@ -35,7 +35,7 @@ class Litfashionmnist(LightningDataModule):
         return DataLoader(self.fashion_mnist_train, batch_size=self.batch_size, shuffle=True)
     
     def val_dataloader(self):
-        return DataLoader(self.fashion_mnist_val, batch_size=self.batch_size, shuffle=True)
+        return DataLoader(self.fashion_mnist_val, batch_size=self.batch_size)
     
     def test_dataloader(self):
-        return DataLoader(self.fashion_mnist_test, batch_size=self.batch_size, shuffle=True)
+        return DataLoader(self.fashion_mnist_test, batch_size=self.batch_size)

@@ -7,7 +7,7 @@ from pytorch_lightning import LightningDataModule
 from torchvision.datasets import MNIST as TorchMNIST
 from torchvision import transforms
 
-DATA_DIR = '../ResNet_utils/data'
+DATA_DIR = 'Utils\data'
 
 class Litmnist(LightningDataModule):
     def __init__(self, batch_size=32, data_dir:str = DATA_DIR):
@@ -30,12 +30,12 @@ class Litmnist(LightningDataModule):
         
         if stage == 'test' or stage is None:
             self.mnist_test = TorchMNIST(root=self.data_dir, train=False, transform=self.transform)
-    
+            
     def train_dataloader(self):
         return DataLoader(self.mnist_train, batch_size=self.batch_size, shuffle=True)
     
     def val_dataloader(self):
-        return DataLoader(self.mnist_val, batch_size=self.batch_size, shuffle=True)
+        return DataLoader(self.mnist_val, batch_size=self.batch_size)
     
     def test_dataloader(self):
-        return DataLoader(self.mnist_test, batch_size=self.batch_size, shuffle=True)
+        return DataLoader(self.mnist_test, batch_size=self.batch_size)

@@ -7,7 +7,7 @@ from pytorch_lightning import LightningDataModule
 from torchvision.datasets import CIFAR10 as TorchCIFAR10
 from torchvision import transforms
 
-DATA_DIR = '../ResNet_utils/data'
+DATA_DIR = 'Utils\data'
 
 class Litcifar10(LightningDataModule):
     def __init__(self, batch_size=32, data_dir:str = DATA_DIR):
@@ -38,7 +38,7 @@ class Litcifar10(LightningDataModule):
         return DataLoader(self.cifar10_train, batch_size=self.batch_size, shuffle=True)
     
     def val_dataloader(self):
-        return DataLoader(self.cifar10_val, batch_size=self.batch_size, shuffle=True)
+        return DataLoader(self.cifar10_val, batch_size=self.batch_size)
     
     def test_dataloader(self):
-        return DataLoader(self.cifar10_test, batch_size=self.batch_size, shuffle=True)
+        return DataLoader(self.cifar10_test, batch_size=self.batch_size)

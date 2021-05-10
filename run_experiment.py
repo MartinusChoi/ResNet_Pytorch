@@ -1,18 +1,23 @@
 import argparse
 import importlib
+import os
 
 import numpy as np
+
 import torch
+
 import pytorch_lightning as pl
 from pytorch_lightning import Trainer
 from pytorch_lightning import loggers as pl_loggers
+from pytorch_lightning.callbacks import ModelCheckpoint
 
 from ResNet import lit_models
 
 np.random.seed(42)
 torch.manual_seed(42)
 
-MODEL_DIR = '../ResNet_utils/trained_models/checkpoints'
+CHECKPOINT_DIR = 'Utils\checkpoints'
+LOG_DIR = 'Utils'
 
 def _import_class(module_and_class_name: str) -> type:
     """
@@ -64,7 +69,17 @@ def main():
 
     args = parser.parse_args()
 
-    tb_logger = pl_loggers.TensorBoardLogger(MODEL_DIR)
+    tb_logger = pl_loggers.TensorBoardLogger(
+        save_dir=LOG_DIR, name="tb_lightning_logs"
+    )
+
+    checkpoint_callback = ModelCheckpoint(
+        monitor='val_loss',
+        dirpath=CHECKPOINT_DIR,
+        filename='resnet-{epoch:02d}-{val_loss:.2f}',
+        save_top_k=3,
+        mode='min'
+    )
 
     data_class = _import_class(f"ResNet.data.Lit{args.data_class}")
     datamodule = data_class()
@@ -76,10 +91,12 @@ def main():
     else :
         lit_model = lit_model_class(args=args)
 
-    trainer = Trainer(default_root_dir=MODEL_DIR, logger=tb_logger).from_argparse_args(args)
+    trainer = Trainer.from_argparse_args(args, default_root_dir=CHECKPOINT_DIR, callbacks=[checkpoint_callback], logger=[tb_logger])
 
-    trainer.fit(lit_model, datamodule)
-    trainer.test(lit_model, datamodule)
+    trainer.fit(lit_model, datamodule=datamodule)
+
+    datamodule.setup(stage="test")
+    trainer.test(lit_model, datamodule=datamodule)
 
 if __name__ == "__main__":
     main()
