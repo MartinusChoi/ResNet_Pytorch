@@ -79,6 +79,7 @@ tensorboard --logdir ./Utils/tb_lightning_logs
 
 ## Reference
 
+- [fsdl-text-recognizer-2021-labs](https://github.com/full-stack-deep-learning/fsdl-text-recognizer-2021-labs) : Reference system architecture
 - [torchvision master documentation, models](https://pytorch.org/vision/stable/models.html) : follow document to load ResNet pretrained with ImageNet
 - [torchvision master documentation, datasets](https://pytorch.org/vision/stable/datasets.html) : follow document to load MNIST, Fashion-MNIST, CIFAR10 dataset
 - [PyTorch Lightning documentation](https://pytorch-lightning.readthedocs.io/en/latest/) : follow document to use pytorch lightning module
