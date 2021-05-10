@@ -67,3 +67,9 @@ python run_experiment.py --max_epochs 10 --data_class cifar10 --optimizer Adagra
 - `--max_epochs` : set maximum epochs.
 - `--gpus` : set option for gpus. if you want run with cpu, set this value with `0`.
 
+## Reference
+
+- [torchvision master documentation, models](https://pytorch.org/vision/stable/models.html) : follow document to load ResNet pretrained with ImageNet
+- [torchvision master documentation, datasets](https://pytorch.org/vision/stable/datasets.html) : follow document to load MNIST, Fashion-MNIST, CIFAR10 dataset
+- [PyTorch Lightning documentation](https://pytorch-lightning.readthedocs.io/en/latest/) : follow document to use pytorch lightning module
+- [pytorch-resnet-mnist](https://github.com/marrrcin/pytorch-resnet-mnist/blob/master/pytorch-resnet-mnist.ipynb) : use `self.model.conv1 = nn.Conv2d(1, 64, kernel_size=(7, 7), stride=(2, 2), padding=(3, 3), bias=False)` for solving channel problem of MNIST dataset
